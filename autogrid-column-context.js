@@ -1,8 +1,6 @@
 import { createContext } from "react";
 const ColumnContext = createContext(null);
-const CustomColumnContext = createContext(null);
 export {
-  ColumnContext,
-  CustomColumnContext
+  ColumnContext
 };
 //# sourceMappingURL=autogrid-column-context.js.map

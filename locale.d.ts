@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { type DatePickerDate, type DatePickerI18n } from '@vaadin/react-components/DatePicker.js';
-import { type DateTimePickerI18n } from '@vaadin/react-components/DateTimePicker.js';
+import { type DatePickerDate, type DatePickerI18n } from '@hilla/react-components/DatePicker.js';
+import { type DateTimePickerI18n } from '@hilla/react-components/DateTimePicker.js';
 export declare const LocaleContext: import("react").Context<string>;
 export declare class LocaleFormatter {
     #private;

@@ -6,7 +6,7 @@ import {
   createDetachedModel,
   EnumModel,
   ObjectModel
-} from "@vaadin/hilla-lit-form";
+} from "@hilla/form";
 const javaTypeMap = {
   byte: "integer",
   "java.lang.Byte": "integer",

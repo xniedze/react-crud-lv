@@ -1,5 +1,5 @@
-import { DatePickerElement } from "@vaadin/react-components/DatePicker.js";
-import { DateTimePickerElement } from "@vaadin/react-components/DateTimePicker.js";
+import { DatePickerElement } from "@hilla/react-components/DatePicker.js";
+import { DateTimePickerElement } from "@hilla/react-components/DateTimePicker.js";
 import { createContext, useContext, useMemo } from "react";
 const LocaleContext = createContext(navigator.language);
 function getFormatRegex(format) {

@@ -1,5 +1,5 @@
 import { Fragment, jsx } from "react/jsx-runtime";
-import { GridSorter } from "@vaadin/react-components/GridSorter.js";
+import { GridSorter } from "@hilla/react-components/GridSorter.js";
 import { useContext } from "react";
 import { ColumnContext } from "./autogrid-column-context.js";
 function HeaderSorter() {

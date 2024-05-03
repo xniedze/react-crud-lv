@@ -1,6 +1,6 @@
-import { type Validator } from '@vaadin/hilla-lit-form';
-import type { FieldDirectiveResult, UseFormResult } from '@vaadin/hilla-react-form';
-import { type CSSProperties, type JSX } from 'react';
+import { type Validator } from '@hilla/form';
+import type { FieldDirectiveResult, UseFormResult } from '@hilla/react-form';
+import type { CSSProperties, JSX } from 'react';
 import type { PropertyInfo } from './model-info.js';
 export type AutoFormFieldProps = Readonly<{
     propertyInfo: PropertyInfo;
@@ -57,51 +57,16 @@ export type FieldOptions = Readonly<{
      */
     readonly?: boolean;
     /**
-     * The element to render for the field. This allows customizing field props
-     * that are not supported by the field options, or to render a different field
-     * component. Other field options are automatically applied to the element,
-     * and the element is automatically bound to the form. If not specified, a
-     * default field element is rendered based on the property type.
-     *
-     * The element must be a field component, such as TextField, TextArea,
-     * NumberField, etc., otherwise form binding will not work. For more
-     * sophisticated customizations, use the `renderer` option.
-     *
-     * If the field options also specify a renderer function, then the element is
-     * ignored.
-     *
-     * Example enabling the clear button for a text field:
-     * ```tsx
-     * {
-     *   element: <TextField clearButtonVisible />
-     * }
-     * ```
-     *
-     * Example rendering a text area instead of a text field:
-     * ```tsx
-     * {
-     *   element: <TextArea />
-     * }
-     * ```
-     */
-    element?: JSX.Element;
-    /**
      * Allows to specify a custom renderer for the field, for example to render a
      * custom type of field or apply an additional layout around the field. The
      * renderer receives field props that must be applied to the custom field
      * component in order to connect it to the form.
      *
-     * In order to customize one of the default fields, or render a different type
-     * of field, consider using the `element` option instead.
-     *
      * Example:
      * ```tsx
      * {
      *   renderer: ({ field }) => (
-     *     <div>
-     *       <TextArea {...field} />
-     *       <p>Number of words: {calculateNumberOfWords()}</p>
-     *     </div>
+     *     <TextArea {...field} />
      *   )
      * }
      * ```

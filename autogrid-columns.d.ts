@@ -1,4 +1,4 @@
-import type { GridColumnProps } from '@vaadin/react-components/GridColumn.js';
+import type { GridColumnProps } from '@hilla/react-components/GridColumn.js';
 import { type HeaderFilterProps } from './header-filter';
 import type { PropertyInfo } from './model-info';
 export type ColumnOptions = HeaderFilterProps & Omit<GridColumnProps<any>, 'dangerouslySetInnerHTML'>;

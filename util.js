@@ -2,8 +2,8 @@ function __REGISTER__(feature) {
   window.Vaadin ??= {};
   window.Vaadin.registrations ??= [];
   window.Vaadin.registrations.push({
-    is: feature ? `${"@vaadin/hilla-react-crud"}/${feature}` : "@vaadin/hilla-react-crud",
-    version: "24.4.0-beta1"
+    is: feature ? `${"@hilla/react-crud"}/${feature}` : "@hilla/react-crud",
+    version: "2.5.5"
   });
 }
 import { jsx } from "react/jsx-runtime";
@@ -34,22 +34,9 @@ function featureRegistration(Component, feature) {
     return /* @__PURE__ */ jsx(Component, { ...props, ref });
   });
 }
-function isFilterEmpty(filter) {
-  if (filter["@type"] === "and" || filter["@type"] === "or") {
-    if (filter.children.length === 0) {
-      return true;
-    }
-    return filter.children.every((child) => isFilterEmpty(child));
-  }
-  if ("filterValue" in filter) {
-    return filter.filterValue === "";
-  }
-  throw new Error(`Unknown filter type: ${"@type" in filter ? filter["@type"] : JSON.stringify(filter)} `);
-}
 export {
   convertToTitleCase,
   featureRegistration,
-  isFilterEmpty,
   registerStylesheet
 };
 //# sourceMappingURL=util.js.map

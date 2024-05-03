@@ -1,21 +1,16 @@
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { _enum } from "@vaadin/hilla-lit-form";
-import { DatePicker } from "@vaadin/react-components/DatePicker.js";
-import { Item } from "@vaadin/react-components/Item.js";
-import { ListBox } from "@vaadin/react-components/ListBox.js";
-import { NumberField } from "@vaadin/react-components/NumberField.js";
-import { Select } from "@vaadin/react-components/Select.js";
-import { TextField } from "@vaadin/react-components/TextField.js";
-import { TimePicker } from "@vaadin/react-components/TimePicker.js";
-import {
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from "react";
-import { ColumnContext, CustomColumnContext } from "./autogrid-column-context.js";
+import { _enum } from "@hilla/form";
+import { DatePicker } from "@hilla/react-components/DatePicker.js";
+import { Item } from "@hilla/react-components/Item.js";
+import { ListBox } from "@hilla/react-components/ListBox.js";
+import { NumberField } from "@hilla/react-components/NumberField.js";
+import { Select } from "@hilla/react-components/Select.js";
+import { TextField } from "@hilla/react-components/TextField.js";
+import { TimePicker } from "@hilla/react-components/TimePicker.js";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ColumnContext } from "./autogrid-column-context.js";
 import { useDatePickerI18n } from "./locale.js";
-import Matcher from "./types/com/vaadin/hilla/crud/filter/PropertyStringFilter/Matcher.js";
+import Matcher from "./types/dev/hilla/crud/filter/PropertyStringFilter/Matcher.js";
 import { convertToTitleCase } from "./util";
 function useFilterState(initialMatcher) {
   const context = useContext(ColumnContext);
@@ -25,12 +20,12 @@ function useFilterState(initialMatcher) {
     setFilterValue(newFilterValue);
     setMatcher(newMatcher);
     const filter = {
+      "@type": "propertyString",
       propertyId: context.propertyInfo.name,
       filterValue: newFilterValue,
-      matcher: newMatcher,
-      "@type": "propertyString"
+      matcher: newMatcher
     };
-    context.setColumnFilter(filter, context.filterKey);
+    context.setPropertyFilter(filter);
   }
   return { matcher, filterValue, updateFilter };
 }
@@ -43,7 +38,7 @@ function useSelectInitWorkaround(selectRef) {
     }, 1);
   }, []);
 }
-function ComparationSelection({ onMatcherChanged, value, isDateTimeType }) {
+function ComparationSelection({ onMatcherChanged, value }) {
   const select = useRef(null);
   useSelectInitWorkaround(select);
   return /* @__PURE__ */ jsx(
@@ -57,8 +52,8 @@ function ComparationSelection({ onMatcherChanged, value, isDateTimeType }) {
         onMatcherChanged(detail.value);
       },
       renderer: () => /* @__PURE__ */ jsxs(ListBox, { children: [
-        /* @__PURE__ */ jsx(Item, { value: Matcher.GREATER_THAN, ...{ label: ">" }, children: isDateTimeType ? "> After" : "> Greater than" }),
-        /* @__PURE__ */ jsx(Item, { value: Matcher.LESS_THAN, ...{ label: "<" }, children: isDateTimeType ? "< Before" : "< Less than" }),
+        /* @__PURE__ */ jsx(Item, { value: Matcher.GREATER_THAN, ...{ label: ">" }, children: "> Greater than" }),
+        /* @__PURE__ */ jsx(Item, { value: Matcher.LESS_THAN, ...{ label: "<" }, children: "< Less than" }),
         /* @__PURE__ */ jsx(Item, { value: Matcher.EQUALS, ...{ label: "=" }, children: "= Equals" })
       ] })
     }
@@ -175,14 +170,7 @@ function DateHeaderFilter() {
   const { matcher, filterValue, updateFilter } = useFilterState(Matcher.GREATER_THAN);
   const [invalid, setInvalid] = useState(false);
   return /* @__PURE__ */ jsxs("div", { className: "auto-grid-date-filter", children: [
-    /* @__PURE__ */ jsx(
-      ComparationSelection,
-      {
-        value: matcher,
-        onMatcherChanged: (m) => updateFilter(m, filterValue),
-        isDateTimeType: true
-      }
-    ),
+    /* @__PURE__ */ jsx(ComparationSelection, { value: matcher, onMatcherChanged: (m) => updateFilter(m, filterValue) }),
     /* @__PURE__ */ jsx(
       DatePicker,
       {
@@ -207,14 +195,7 @@ function TimeHeaderFilter() {
   const { matcher, filterValue, updateFilter } = useFilterState(Matcher.GREATER_THAN);
   const [invalid, setInvalid] = useState(false);
   return /* @__PURE__ */ jsxs("div", { className: "auto-grid-time-filter", children: [
-    /* @__PURE__ */ jsx(
-      ComparationSelection,
-      {
-        value: matcher,
-        onMatcherChanged: (m) => updateFilter(m, filterValue),
-        isDateTimeType: true
-      }
-    ),
+    /* @__PURE__ */ jsx(ComparationSelection, { value: matcher, onMatcherChanged: (m) => updateFilter(m, filterValue) }),
     /* @__PURE__ */ jsx(
       TimePicker,
       {
@@ -236,20 +217,10 @@ function TimeHeaderFilter() {
 function NoHeaderFilter() {
   return /* @__PURE__ */ jsx(Fragment, {});
 }
-function HeaderFilterWrapper({ original }) {
-  const context = useContext(ColumnContext);
-  const customContext = useContext(CustomColumnContext);
-  const { setColumnFilter, headerFilterRenderer: HeaderFilterRenderer, filterKey } = context ?? customContext;
-  function setFilter(filter) {
-    setColumnFilter(filter, filterKey);
-  }
-  return /* @__PURE__ */ jsx(HeaderFilterRenderer, { original, setFilter });
-}
 export {
   BooleanHeaderFilter,
   DateHeaderFilter,
   EnumHeaderFilter,
-  HeaderFilterWrapper,
   NoHeaderFilter,
   NumberHeaderFilter,
   StringHeaderFilter,

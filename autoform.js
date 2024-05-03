@@ -1,11 +1,11 @@
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { EndpointError } from "@vaadin/hilla-frontend";
-import { ValidationError } from "@vaadin/hilla-lit-form";
-import { useForm } from "@vaadin/hilla-react-form";
-import { Button } from "@vaadin/react-components/Button.js";
-import { ConfirmDialog } from "@vaadin/react-components/ConfirmDialog";
-import { FormLayout } from "@vaadin/react-components/FormLayout";
-import { VerticalLayout } from "@vaadin/react-components/VerticalLayout.js";
+import { ValidationError } from "@hilla/form";
+import { EndpointError } from "@hilla/frontend";
+import { Button } from "@hilla/react-components/Button.js";
+import { ConfirmDialog } from "@hilla/react-components/ConfirmDialog";
+import { FormLayout } from "@hilla/react-components/FormLayout";
+import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
+import { useForm } from "@hilla/react-form";
 import {
   useEffect,
   useMemo,
@@ -27,7 +27,6 @@ function AutoForm({
   disabled,
   layoutRenderer: LayoutRenderer,
   visibleFields,
-  hiddenFields,
   formLayoutProps,
   fieldOptions,
   style,
@@ -53,27 +52,6 @@ function AutoForm({
       form.clear();
     }
   }, [item]);
-  function handleSubmitError(error) {
-    if (error instanceof ValidationError) {
-      const nonPropertyErrorMessages = error.errors.filter((validationError) => !validationError.property).map((validationError) => validationError.validatorMessage ?? validationError.message);
-      if (nonPropertyErrorMessages.length > 0) {
-        setFormError(
-          /* @__PURE__ */ jsxs(Fragment, { children: [
-            "Validation errors:",
-            /* @__PURE__ */ jsx("ul", { children: nonPropertyErrorMessages.map((message, index) => /* @__PURE__ */ jsx("li", { children: message }, index)) })
-          ] })
-        );
-      }
-    } else if (error instanceof EndpointError) {
-      if (onSubmitError) {
-        onSubmitError({ error, setMessage: setFormError });
-      } else {
-        setFormError(error.message);
-      }
-    } else {
-      throw error;
-    }
-  }
   async function handleSubmit() {
     try {
       setFormError("");
@@ -87,7 +65,18 @@ function AutoForm({
         form.clear();
       }
     } catch (error) {
-      handleSubmitError(error);
+      if (error instanceof ValidationError) {
+        return;
+      }
+      if (error instanceof EndpointError) {
+        if (onSubmitError) {
+          onSubmitError({ error, setMessage: setFormError });
+        } else {
+          setFormError(error.message);
+        }
+      } else {
+        throw error;
+      }
     }
   }
   function deleteItem() {
@@ -137,10 +126,7 @@ function AutoForm({
       propertyInfo.name
     );
   }
-  let visibleProperties = visibleFields ? modelInfo.getProperties(visibleFields) : getDefaultProperties(modelInfo);
-  if (hiddenFields) {
-    visibleProperties = visibleProperties.filter(({ name }) => !hiddenFields.includes(name));
-  }
+  const visibleProperties = visibleFields ? modelInfo.getProperties(visibleFields) : getDefaultProperties(modelInfo);
   const fields = visibleProperties.map(createAutoFormField);
   const layout = LayoutRenderer ? /* @__PURE__ */ jsx(LayoutRenderer, { form, children: fields }) : /* @__PURE__ */ jsx(FormLayout, { ...formLayoutProps, children: fields });
   return /* @__PURE__ */ jsxs("div", { className: `auto-form ${className ?? ""}`, id, style, "data-testid": "auto-form", children: [

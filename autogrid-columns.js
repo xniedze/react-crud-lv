@@ -17,7 +17,7 @@ import {
   StringHeaderFilter,
   TimeHeaderFilter
 } from "./header-filter";
-function getTypeColumnOptions(propertyInfo, customColumnOptions) {
+function getTypeColumnOptions(propertyInfo) {
   switch (propertyInfo.type) {
     case "integer":
       return {
@@ -25,7 +25,7 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridIntegerRenderer,
-        headerFilterRenderer: NumberHeaderFilter
+        headerRenderer: NumberHeaderFilter
       };
     case "decimal":
       return {
@@ -33,7 +33,7 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridDecimalRenderer,
-        headerFilterRenderer: NumberHeaderFilter
+        headerRenderer: NumberHeaderFilter
       };
     case "boolean":
       return {
@@ -41,7 +41,7 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridBooleanRenderer,
-        headerFilterRenderer: BooleanHeaderFilter
+        headerRenderer: BooleanHeaderFilter
       };
     case "date":
       return {
@@ -49,7 +49,7 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridDateRenderer,
-        headerFilterRenderer: DateHeaderFilter
+        headerRenderer: DateHeaderFilter
       };
     case "time":
       return {
@@ -57,7 +57,7 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridTimeRenderer,
-        headerFilterRenderer: TimeHeaderFilter
+        headerRenderer: TimeHeaderFilter
       };
     case "datetime":
       return {
@@ -65,36 +65,40 @@ function getTypeColumnOptions(propertyInfo, customColumnOptions) {
         textAlign: "end",
         flexGrow: 0,
         renderer: AutoGridDateTimeRenderer,
-        headerFilterRenderer: DateHeaderFilter
+        headerRenderer: DateHeaderFilter
       };
     case "enum":
       return {
         autoWidth: true,
         renderer: AutoGridEnumRenderer,
-        headerFilterRenderer: EnumHeaderFilter
+        headerRenderer: EnumHeaderFilter
       };
     case "string":
       return {
         autoWidth: true,
-        headerFilterRenderer: StringHeaderFilter
+        headerRenderer: StringHeaderFilter
       };
     case "object":
       return {
         autoWidth: true,
-        renderer: customColumnOptions?.path !== void 0 && customColumnOptions.renderer == null ? null : AutoGridJsonRenderer,
-        headerFilterRenderer: NoHeaderFilter
+        renderer: AutoGridJsonRenderer,
+        headerRenderer: NoHeaderFilter
       };
     default:
       return {
         autoWidth: true,
-        headerFilterRenderer: NoHeaderFilter
+        headerRenderer: NoHeaderFilter
       };
   }
 }
 function getColumnOptions(propertyInfo, customColumnOptions) {
-  const typeColumnOptions = getTypeColumnOptions(propertyInfo, customColumnOptions);
-  const headerFilterRenderer = customColumnOptions?.filterable === false ? NoHeaderFilter : typeColumnOptions.headerFilterRenderer ?? NoHeaderFilter;
-  return customColumnOptions ? { ...typeColumnOptions, headerFilterRenderer, ...customColumnOptions } : typeColumnOptions;
+  const typeColumnOptions = getTypeColumnOptions(propertyInfo);
+  const finalHeaderRenderer = customColumnOptions?.filterable === false ? NoHeaderFilter : typeColumnOptions.headerRenderer;
+  const columnOptions = customColumnOptions ? { ...typeColumnOptions, ...customColumnOptions, headerRenderer: finalHeaderRenderer } : typeColumnOptions;
+  if (!columnOptions.headerRenderer) {
+    console.error(`No header renderer defined for column ${propertyInfo.name}`);
+  }
+  return columnOptions;
 }
 export {
   getColumnOptions

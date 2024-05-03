@@ -1,15 +1,14 @@
 {
-  "name": "@vaadin/hilla-react-crud",
-  "version": "24.4.0-beta1",
+  "name": "@xniedze/react-crud-lv",
+  "version": "2.5.5",
   "description": "Hilla CRUD utils for React",
   "main": "index.js",
   "module": "index.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vaadin/hilla.git",
-    "directory": "packages/ts/react-crud"
-  },
+    "url": "https://github.com/xniedze/react-crud-lv.git"
+   },
   "keywords": [
     "Hilla",
     "CRUD",
@@ -44,10 +43,6 @@
   },
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/vaadin/hilla/issues"
-  },
-  "homepage": "https://hilla.dev",
   "files": [
     "*.{d.ts.map,d.ts,js.map,js}",
     "types/**"
@@ -56,14 +51,14 @@
     "access": "public"
   },
   "dependencies": {
-    "@vaadin/hilla-frontend": "24.4.0-beta1",
-    "@vaadin/hilla-lit-form": "24.4.0-beta1",
-    "@vaadin/hilla-react-form": "24.4.0-beta1",
-    "@vaadin/react-components": "24.4.0-beta1"
+    "@hilla/form": "2.5.5",
+    "@hilla/frontend": "2.5.5",
+    "@hilla/react-components": "2.3.0",
+    "@hilla/react-form": "2.5.5",
+    "@vaadin/vaadin-lumo-styles": "24.3.0"
   },
   "peerDependencies": {
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^18"
   },
   "devDependencies": {
     "@esm-bundle/chai": "^4.3.4-fix.0",

@@ -1,4 +1,4 @@
-import { type AbstractModel, type DetachedModelConstructor, type ModelMetadata } from '@vaadin/hilla-lit-form';
+import { type AbstractModel, type DetachedModelConstructor, type ModelMetadata } from '@hilla/form';
 export type PropertyType = 'boolean' | 'date' | 'datetime' | 'decimal' | 'enum' | 'integer' | 'object' | 'string' | 'time' | undefined;
 export interface PropertyInfo {
     name: string;

@@ -1,61 +1,52 @@
 import { jsx } from "react/jsx-runtime";
-import { _enum } from "@vaadin/hilla-lit-form";
-import { useFormPart } from "@vaadin/hilla-react-form";
-import { Checkbox } from "@vaadin/react-components/Checkbox.js";
-import { DatePicker } from "@vaadin/react-components/DatePicker.js";
-import { DateTimePicker } from "@vaadin/react-components/DateTimePicker.js";
-import { IntegerField } from "@vaadin/react-components/IntegerField.js";
-import { NumberField } from "@vaadin/react-components/NumberField.js";
-import { Select } from "@vaadin/react-components/Select.js";
-import { TextArea } from "@vaadin/react-components/TextArea.js";
-import { TextField } from "@vaadin/react-components/TextField.js";
-import { TimePicker } from "@vaadin/react-components/TimePicker.js";
-import {
-  cloneElement,
-  createElement,
-  useEffect,
-  useMemo
-} from "react";
+import { _enum } from "@hilla/form";
+import { Checkbox } from "@hilla/react-components/Checkbox.js";
+import { DatePicker } from "@hilla/react-components/DatePicker.js";
+import { DateTimePicker } from "@hilla/react-components/DateTimePicker.js";
+import { IntegerField } from "@hilla/react-components/IntegerField.js";
+import { NumberField } from "@hilla/react-components/NumberField.js";
+import { Select } from "@hilla/react-components/Select.js";
+import { TextArea } from "@hilla/react-components/TextArea.js";
+import { TextField } from "@hilla/react-components/TextField.js";
+import { TimePicker } from "@hilla/react-components/TimePicker.js";
+import { useFormPart } from "@hilla/react-form";
+import { useEffect, useMemo } from "react";
 import { useDatePickerI18n, useDateTimePickerI18n } from "./locale.js";
 import { convertToTitleCase } from "./util.js";
 function getPropertyModel(form, propertyInfo) {
   const pathParts = propertyInfo.name.split(".");
   return pathParts.reduce((model, property) => model ? model[property] : void 0, form.model);
 }
-function renderFieldElement(defaultComponentType, { element, field, fieldProps }, additionalProps = {}) {
-  const fieldElement = element ?? createElement(defaultComponentType);
-  return cloneElement(fieldElement, { ...fieldProps, ...additionalProps, ...fieldElement.props, ...field });
+function AutoFormTextField({ field, fieldProps }) {
+  return /* @__PURE__ */ jsx(TextField, { ...field, ...fieldProps });
 }
-function AutoFormTextField(props) {
-  return renderFieldElement(TextField, props);
+function AutoFormIntegerField({ field, fieldProps }) {
+  return /* @__PURE__ */ jsx(IntegerField, { ...field, ...fieldProps });
 }
-function AutoFormIntegerField(props) {
-  return renderFieldElement(IntegerField, props);
+function AutoFormDecimalField({ field, fieldProps }) {
+  return /* @__PURE__ */ jsx(NumberField, { ...field, ...fieldProps });
 }
-function AutoFormDecimalField(props) {
-  return renderFieldElement(NumberField, props);
-}
-function AutoFormDateField(props) {
+function AutoFormDateField({ field, fieldProps }) {
   const i18n = useDatePickerI18n();
-  return renderFieldElement(DatePicker, props, { i18n });
+  return /* @__PURE__ */ jsx(DatePicker, { i18n, ...field, ...fieldProps });
 }
-function AutoFormTimeField(props) {
-  return renderFieldElement(TimePicker, props);
+function AutoFormTimeField({ field, fieldProps }) {
+  return /* @__PURE__ */ jsx(TimePicker, { ...field, ...fieldProps });
 }
-function AutoFormDateTimeField(props) {
+function AutoFormDateTimeField({ field, fieldProps }) {
   const i18n = useDateTimePickerI18n();
-  return renderFieldElement(DateTimePicker, props, { i18n });
+  return /* @__PURE__ */ jsx(DateTimePicker, { i18n, ...field, ...fieldProps });
 }
-function AutoFormEnumField(props) {
-  const enumModel = props.model;
-  const items = Object.keys(enumModel[_enum]).map((value) => ({
+function AutoFormEnumField({ model, field, fieldProps }) {
+  const enumModel = model;
+  const options = Object.keys(enumModel[_enum]).map((value) => ({
     label: convertToTitleCase(value),
     value
   }));
-  return renderFieldElement(Select, props, { items });
+  return /* @__PURE__ */ jsx(Select, { ...field, ...fieldProps, items: options });
 }
-function AutoFormBooleanField(props) {
-  return renderFieldElement(Checkbox, props);
+function AutoFormBooleanField({ field, fieldProps }) {
+  return /* @__PURE__ */ jsx(Checkbox, { ...field, ...fieldProps });
 }
 function AutoFormObjectField({ model, fieldProps }) {
   const part = useFormPart(model);
@@ -88,26 +79,25 @@ function AutoFormField(props) {
     disabled: options.disabled ?? props.disabled,
     readonly: options.readonly
   };
-  const rendererProps = { model, field, element: options.element, fieldProps };
   switch (props.propertyInfo.type) {
     case "string":
-      return /* @__PURE__ */ jsx(AutoFormTextField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormTextField, { model, field, fieldProps });
     case "integer":
-      return /* @__PURE__ */ jsx(AutoFormIntegerField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormIntegerField, { model, field, fieldProps });
     case "decimal":
-      return /* @__PURE__ */ jsx(AutoFormDecimalField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormDecimalField, { model, field, fieldProps });
     case "date":
-      return /* @__PURE__ */ jsx(AutoFormDateField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormDateField, { model, field, fieldProps });
     case "time":
-      return /* @__PURE__ */ jsx(AutoFormTimeField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormTimeField, { model, field, fieldProps });
     case "datetime":
-      return /* @__PURE__ */ jsx(AutoFormDateTimeField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormDateTimeField, { model, field, fieldProps });
     case "enum":
-      return /* @__PURE__ */ jsx(AutoFormEnumField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormEnumField, { model, field, fieldProps });
     case "boolean":
-      return /* @__PURE__ */ jsx(AutoFormBooleanField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormBooleanField, { model, field, fieldProps });
     case "object":
-      return /* @__PURE__ */ jsx(AutoFormObjectField, { ...rendererProps });
+      return /* @__PURE__ */ jsx(AutoFormObjectField, { model, field, fieldProps });
     default:
       return null;
   }

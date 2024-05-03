@@ -1,61 +1,72 @@
 import { jsx } from "react/jsx-runtime";
-import { Grid } from "@vaadin/react-components/Grid.js";
-import { GridColumn } from "@vaadin/react-components/GridColumn.js";
-import { GridColumnGroup } from "@vaadin/react-components/GridColumnGroup.js";
 import {
-  cloneElement,
+  Grid
+} from "@hilla/react-components/Grid.js";
+import { GridColumn } from "@hilla/react-components/GridColumn.js";
+import { GridColumnGroup } from "@hilla/react-components/GridColumnGroup.js";
+import {
   forwardRef,
   useEffect,
-  useImperativeHandle,
   useMemo,
+  useImperativeHandle,
   useRef,
-  useState
+  useState,
+  cloneElement
 } from "react";
-import { ColumnContext, CustomColumnContext } from "./autogrid-column-context.js";
+import { ColumnContext } from "./autogrid-column-context.js";
 import { getColumnOptions } from "./autogrid-columns.js";
-import { AutoGridFooterItemCountRenderer, AutoGridRowNumberRenderer, FooterContext } from "./autogrid-renderers.js";
+import { AutoGridRowNumberRenderer } from "./autogrid-renderers.js";
 import css from "./autogrid.obj.js";
-import { createDataProvider, isCountService } from "./data-provider.js";
-import { NoHeaderFilter, HeaderFilterWrapper } from "./header-filter";
 import { HeaderSorter } from "./header-sorter";
 import { getDefaultProperties, ModelInfo } from "./model-info.js";
-import { isFilterEmpty, registerStylesheet } from "./util";
+import Direction from "./types/org/springframework/data/domain/Sort/Direction.js";
+import { registerStylesheet } from "./util";
 registerStylesheet(css);
-function wrapCustomColumn(column, setColumnFilter, options) {
-  const key = column.key ?? "no-key";
-  const { header, headerRenderer } = column.props;
-  const customOptions = options.columnOptions?.[key];
-  const { header: customHeader, headerRenderer: customHeaderRenderer, headerFilterRenderer } = customOptions ?? {};
-  const columnWithoutHeader = cloneElement(column, {
-    header: null,
-    headerRenderer: HeaderFilterWrapper
-  });
-  return /* @__PURE__ */ jsx(
-    CustomColumnContext.Provider,
-    {
-      value: {
-        setColumnFilter,
-        headerFilterRenderer: headerFilterRenderer ?? NoHeaderFilter,
-        filterKey: key
-      },
-      children: /* @__PURE__ */ jsx(
-        GridColumnGroup,
-        {
-          header: customHeader ?? header,
-          headerRenderer: customHeaderRenderer ?? headerRenderer,
-          children: columnWithoutHeader
-        },
-        key
-      )
-    },
-    key
-  );
+function createDataProvider(grid, service, filter) {
+  let first = true;
+  return async (params, callback) => {
+    const sort = {
+      orders: params.sortOrders.filter((order) => order.direction != null).map((order) => ({
+        property: order.path,
+        direction: order.direction === "asc" ? Direction.ASC : Direction.DESC,
+        ignoreCase: false
+      }))
+    };
+    const pageNumber = params.page;
+    const { pageSize } = params;
+    const req = {
+      pageNumber,
+      pageSize,
+      sort
+    };
+    const items = await service.list(req, filter.current);
+    let size;
+    if (items.length === pageSize) {
+      size = (pageNumber + 1) * pageSize + 1;
+      const cacheSize = grid._dataProviderController.rootCache.size;
+      if (cacheSize !== void 0 && size < cacheSize) {
+        size = void 0;
+      }
+    } else {
+      size = pageNumber * pageSize + items.length;
+    }
+    callback(items, size);
+    if (first) {
+      first = false;
+      setTimeout(() => grid.recalculateColumnWidths(), 0);
+    }
+  };
 }
-function addCustomColumns(columns, options, setColumnFilter) {
+function addCustomColumns(columns, options) {
   if (!options.customColumns) {
     return columns;
   }
-  const customColumns = options.noHeaderFilters ? options.customColumns : options.customColumns.map((column) => wrapCustomColumn(column, setColumnFilter, options));
+  const customColumns = options.noHeaderFilters ? options.customColumns : options.customColumns.map((column) => {
+    const { header, headerRenderer } = column.props;
+    const { key } = column;
+    const columnWithoutHeader = cloneElement(column, { header: void 0, headerRenderer: void 0 });
+    return /* @__PURE__ */ jsx(GridColumnGroup, { header, headerRenderer, children: columnWithoutHeader }, key);
+  });
   if (options.visibleColumns) {
     const columnMap = [...columns, ...customColumns].reduce((map, column) => {
       const { key } = column;
@@ -68,7 +79,7 @@ function addCustomColumns(columns, options, setColumnFilter) {
   }
   return [...columns, ...customColumns];
 }
-function useColumns(properties, setColumnFilter, options) {
+function useColumns(properties, setPropertyFilter, options) {
   const sortableProperties = properties.filter(
     (propertyInfo) => options.columnOptions?.[propertyInfo.name]?.sortable !== false
   );
@@ -77,10 +88,10 @@ function useColumns(properties, setColumnFilter, options) {
   );
   let columns = properties.map((propertyInfo) => {
     let column;
-    const customColumnOptions = options.columnOptions?.[propertyInfo.name];
-    const { headerFilterRenderer, ...columnProps } = getColumnOptions(propertyInfo, customColumnOptions);
+    const customColumnOptions = options.columnOptions ? options.columnOptions[propertyInfo.name] : void 0;
+    const { headerRenderer, ...columnProps } = getColumnOptions(propertyInfo, customColumnOptions);
     if (!options.noHeaderFilters) {
-      column = /* @__PURE__ */ jsx(GridColumnGroup, { headerRenderer: HeaderSorter, children: /* @__PURE__ */ jsx(GridColumn, { path: propertyInfo.name, headerRenderer: HeaderFilterWrapper, ...columnProps }) });
+      column = /* @__PURE__ */ jsx(GridColumnGroup, { headerRenderer: HeaderSorter, children: /* @__PURE__ */ jsx(GridColumn, { path: propertyInfo.name, headerRenderer, ...columnProps }) });
     } else {
       column = /* @__PURE__ */ jsx(GridColumn, { path: propertyInfo.name, headerRenderer: HeaderSorter, ...columnProps });
     }
@@ -89,44 +100,22 @@ function useColumns(properties, setColumnFilter, options) {
       {
         value: {
           propertyInfo,
-          setColumnFilter,
+          setPropertyFilter,
           sortState,
           setSortState,
-          customColumnOptions,
-          headerFilterRenderer: headerFilterRenderer ?? NoHeaderFilter,
-          filterKey: propertyInfo.name
+          customColumnOptions
         },
         children: column
       },
       propertyInfo.name
     );
   });
-  columns = addCustomColumns(columns, options, setColumnFilter);
-  if (options.hiddenColumns) {
-    columns = columns.filter(({ key }) => !(key && options.hiddenColumns?.includes(key)));
-  }
+  columns = addCustomColumns(columns, options);
   if (options.rowNumbers) {
     columns = [
       /* @__PURE__ */ jsx(GridColumn, { width: "4em", flexGrow: 0, renderer: AutoGridRowNumberRenderer }, "rownumbers"),
       ...columns
     ];
-  }
-  const { totalCount, filteredCount, itemCounts, footerCountRenderer } = options;
-  if (totalCount ?? filteredCount) {
-    const col = /* @__PURE__ */ jsx(
-      FooterContext.Provider,
-      {
-        value: {
-          totalCount,
-          filteredCount,
-          footerCountRenderer,
-          itemCounts
-        },
-        children: /* @__PURE__ */ jsx(GridColumnGroup, { footerRenderer: AutoGridFooterItemCountRenderer, children: columns })
-      },
-      "grid-footer"
-    );
-    columns = [col];
   }
   return columns;
 }
@@ -136,20 +125,15 @@ function AutoGridInner({
   itemIdProperty,
   experimentalFilter,
   visibleColumns,
-  hiddenColumns,
   noHeaderFilters,
   customColumns,
   columnOptions,
   rowNumbers,
-  totalCount,
-  filteredCount,
-  footerCountRenderer,
   ...gridProps
 }, ref) {
   const [internalFilter, setInternalFilter] = useState({ "@type": "and", children: [] });
-  const [itemCounts, setItemCounts] = useState();
   const gridRef = useRef(null);
-  const dataProviderRef = useRef();
+  const dataProviderFilter = useRef(void 0);
   useImperativeHandle(
     ref,
     () => ({
@@ -157,28 +141,27 @@ function AutoGridInner({
         return gridRef.current;
       },
       refresh() {
-        dataProviderRef.current?.reset();
         gridRef.current?.clearCache();
       }
     }),
     []
   );
-  const setHeaderFilter = (filter, filterKey) => {
+  const setHeaderPropertyFilter = (propertyFilter) => {
+    const filterIndex = internalFilter.children.findIndex(
+      (f) => f.propertyId === propertyFilter.propertyId
+    );
     let changed = false;
-    filter.key = filterKey;
-    const indexOfFilter = filterKey ? internalFilter.children.findIndex((f) => f.key === filterKey) : -1;
-    const isEmptyFilter = isFilterEmpty(filter);
-    if (indexOfFilter >= 0 && isEmptyFilter) {
-      internalFilter.children.splice(indexOfFilter, 1);
-      changed = true;
-    } else if (!isEmptyFilter) {
-      if (indexOfFilter >= 0) {
-        internalFilter.children[indexOfFilter] = filter;
-        changed = true;
-      } else {
-        internalFilter.children.push(filter);
+    if (propertyFilter.filterValue === "") {
+      if (filterIndex >= 0) {
+        internalFilter.children.splice(filterIndex, 1);
         changed = true;
       }
+    } else if (filterIndex >= 0) {
+      internalFilter.children[filterIndex] = propertyFilter;
+      changed = true;
+    } else {
+      internalFilter.children.push(propertyFilter);
+      changed = true;
     }
     if (changed) {
       setInternalFilter({ ...internalFilter });
@@ -186,17 +169,12 @@ function AutoGridInner({
   };
   const modelInfo = useMemo(() => new ModelInfo(model, itemIdProperty), [model]);
   const properties = visibleColumns ? modelInfo.getProperties(visibleColumns) : getDefaultProperties(modelInfo);
-  const children = useColumns(properties, setHeaderFilter, {
+  const children = useColumns(properties, setHeaderPropertyFilter, {
     visibleColumns,
-    hiddenColumns,
     noHeaderFilters,
     customColumns,
     columnOptions,
-    rowNumbers,
-    totalCount,
-    filteredCount,
-    footerCountRenderer,
-    itemCounts
+    rowNumbers
   });
   useEffect(() => {
     if (noHeaderFilters) {
@@ -204,35 +182,15 @@ function AutoGridInner({
     }
   }, [noHeaderFilters]);
   useEffect(() => {
-    if ((!isCountService(service) && totalCount) ?? filteredCount) {
-      console.error(
-        '"totalCount" and "filteredCount" props require the provided service to implement the CountService interface.'
-      );
-    }
     const grid = gridRef.current;
-    const timeoutId = setTimeout(() => {
-      let firstUpdate = true;
-      const dataProvider = createDataProvider(service, {
-        initialFilter: experimentalFilter ?? internalFilter,
-        loadTotalCount: totalCount,
-        afterLoad(newItemCounts) {
-          setItemCounts(newItemCounts);
-          if (firstUpdate) {
-            firstUpdate = false;
-            setTimeout(() => grid.recalculateColumnWidths(), 0);
-          }
-        }
-      });
-      dataProviderRef.current = dataProvider;
-      gridRef.current.dataProvider = dataProvider.load.bind(dataProvider);
+    setTimeout(() => {
+      grid.dataProvider = createDataProvider(grid, service, dataProviderFilter);
     }, 1);
-    return () => clearTimeout(timeoutId);
   }, [model, service]);
   useEffect(() => {
-    const dataProvider = dataProviderRef.current;
     const grid = gridRef.current;
-    if (grid && dataProvider) {
-      dataProvider.setFilter(experimentalFilter ?? internalFilter);
+    if (grid) {
+      dataProviderFilter.current = experimentalFilter ?? internalFilter;
       grid.clearCache();
     }
   }, [experimentalFilter, internalFilter]);

@@ -1,10 +1,10 @@
 import { Fragment, jsx } from "react/jsx-runtime";
-import { Icon } from "@vaadin/react-components/Icon.js";
-import { createContext, useContext } from "react";
+import { Icon } from "@hilla/react-components/Icon.js";
+import "@vaadin/vaadin-lumo-styles/vaadin-iconset.js";
+import { useContext } from "react";
 import { ColumnContext } from "./autogrid-column-context";
 import { useLocaleFormatter } from "./locale.js";
 import { convertToTitleCase } from "./util";
-import "@vaadin/vaadin-lumo-styles/vaadin-iconset.js";
 function getColumnValue(context, item) {
   const path = context.propertyInfo.name;
   return path.split(".").reduce((obj, property) => obj ? obj[property] : void 0, item);
@@ -58,35 +58,15 @@ function AutoGridJsonRenderer({ item }) {
 function AutoGridRowNumberRenderer({ model }) {
   return /* @__PURE__ */ jsx(Fragment, { children: model.index + 1 });
 }
-const FooterContext = createContext(void 0);
-function AutoGridFooterItemCountRenderer() {
-  const footerContext = useContext(FooterContext);
-  const { totalCount, filteredCount, itemCounts, footerCountRenderer: FooterRenderer } = footerContext;
-  if (FooterRenderer) {
-    return /* @__PURE__ */ jsx(FooterRenderer, { ...itemCounts });
-  }
-  let filterCountText;
-  if (filteredCount && itemCounts?.filteredCount !== void 0) {
-    filterCountText = totalCount && itemCounts.totalCount !== void 0 ? `Showing: ${itemCounts.filteredCount} out of ${itemCounts.totalCount}` : `Showing: ${itemCounts.filteredCount}`;
-  } else if (totalCount && itemCounts?.totalCount !== void 0) {
-    filterCountText = `Total: ${itemCounts.totalCount}`;
-  }
-  if (filterCountText) {
-    return /* @__PURE__ */ jsx("p", { children: filterCountText });
-  }
-  return /* @__PURE__ */ jsx(Fragment, {});
-}
 export {
   AutoGridBooleanRenderer,
   AutoGridDateRenderer,
   AutoGridDateTimeRenderer,
   AutoGridDecimalRenderer,
   AutoGridEnumRenderer,
-  AutoGridFooterItemCountRenderer,
   AutoGridIntegerRenderer,
   AutoGridJsonRenderer,
   AutoGridRowNumberRenderer,
-  AutoGridTimeRenderer,
-  FooterContext
+  AutoGridTimeRenderer
 };
 //# sourceMappingURL=autogrid-renderers.js.map
