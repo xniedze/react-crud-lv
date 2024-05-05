@@ -79,7 +79,7 @@ function StringHeaderFilter() {
     TextField,
     {
       theme: "small",
-      placeholder: filterPlaceholder ?? "Filter...",
+      placeholder: filterPlaceholder ?? "",
       onInput: (e) => {
         const fieldValue = e.target.value;
         setInputValue(fieldValue);
@@ -106,7 +106,7 @@ function NumberHeaderFilter() {
       NumberField,
       {
         theme: "small",
-        placeholder: filterPlaceholder ?? "Filter...",
+        placeholder: filterPlaceholder ?? "",
         onInput: (e) => {
           const fieldValue = e.target.value;
           setInputValue(fieldValue);
@@ -176,7 +176,7 @@ function DateHeaderFilter() {
       {
         theme: "small",
         value: filterValue,
-        placeholder: context.customColumnOptions?.filterPlaceholder ?? "Filter...",
+        placeholder: context.customColumnOptions?.filterPlaceholder ?? "",
         i18n,
         onInvalidChanged: ({ detail: { value } }) => {
           setInvalid(value);
@@ -201,7 +201,7 @@ function TimeHeaderFilter() {
       {
         theme: "small",
         value: filterValue,
-        placeholder: context.customColumnOptions?.filterPlaceholder ?? "Filter...",
+        placeholder: context.customColumnOptions?.filterPlaceholder ?? "",
         onInvalidChanged: ({ detail: { value } }) => {
           setInvalid(value);
         },
