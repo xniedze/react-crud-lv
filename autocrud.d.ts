@@ -4,7 +4,7 @@ import { type AutoFormProps } from './autoform.js';
 import { type AutoGridProps } from './autogrid.js';
 import type { CrudService } from './crud.js';
 import { type ComponentStyleProps } from './util.js';
-export type AutoCrudFormProps<TModel extends AbstractModel> = Omit<Partial<AutoFormProps<TModel>>, 'disabled' | 'item' | 'model' | 'onDeleteSuccess' | 'onSubmitSuccess' | 'service'>;
+export type AutoCrudFormProps<TModel extends AbstractModel> = Omit<Partial<AutoFormProps<TModel>>, 'disabled' | 'item' | 'model' | 'service'>;
 export type AutoCrudGridProps<TItem> = Omit<Partial<AutoGridProps<TItem>>, 'model' | 'onActiveItemChanged' | 'selectedItems' | 'service'>;
 export type AutoCrudProps<TModel extends AbstractModel = AbstractModel> = ComponentStyleProps & Readonly<{
     /**

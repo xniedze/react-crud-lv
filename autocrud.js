@@ -28,6 +28,8 @@ function AutoCrud({
   function handleCancel() {
     setItem(void 0);
   }
+  const onSubmitCustom = formProps?.onSubmitSuccess;
+  const onDeleteCustom = formProps?.onDeleteSuccess;
   const mainSection = /* @__PURE__ */ jsxs("div", { className: "auto-crud-main", children: [
     /* @__PURE__ */ jsx(
       AutoGrid,
@@ -63,10 +65,12 @@ function AutoCrud({
           setItem(submittedItem);
         }
         refreshGrid();
+        onSubmitCustom?.({ item: submittedItem });
       },
-      onDeleteSuccess: () => {
+      onDeleteSuccess: (arg) => {
         setItem(void 0);
         refreshGrid();
+        onDeleteCustom?.(arg);
       }
     }
   );
