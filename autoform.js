@@ -25,6 +25,7 @@ function AutoForm({
   onSubmitError,
   onSubmitSuccess,
   disabled,
+  readonly,
   layoutRenderer: LayoutRenderer,
   visibleFields,
   formLayoutProps,
@@ -121,6 +122,7 @@ function AutoForm({
         propertyInfo,
         form,
         disabled,
+        readonly,
         options: fieldOptionsForProperty
       },
       propertyInfo.name
@@ -134,7 +136,7 @@ function AutoForm({
       layout,
       formError ? /* @__PURE__ */ jsx("div", { style: { color: "var(--lumo-error-color)" }, children: formError }) : /* @__PURE__ */ jsx(Fragment, {})
     ] }),
-    /* @__PURE__ */ jsxs("div", { className: "auto-form-toolbar", children: [
+    !readonly && /* @__PURE__ */ jsxs("div", { className: "auto-form-toolbar", children: [
       /* @__PURE__ */ jsx(
         Button,
         {

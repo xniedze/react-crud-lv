@@ -77,7 +77,7 @@ function AutoFormField(props) {
     helperText: options.helperText,
     colspan: options.colspan,
     disabled: options.disabled ?? props.disabled,
-    readonly: options.readonly
+    readonly: options.readonly ?? props.readonly
   };
   switch (props.propertyInfo.type) {
     case "string":

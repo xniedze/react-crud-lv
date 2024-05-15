@@ -7,6 +7,7 @@ export type AutoFormFieldProps = Readonly<{
     form: UseFormResult<any>;
     options: FieldOptions;
     disabled?: boolean;
+    readonly?: boolean;
 }>;
 type CustomFormFieldProps = FieldDirectiveResult & Readonly<{
     label?: string;

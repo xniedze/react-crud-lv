@@ -111,6 +111,11 @@ export type AutoFormProps<M extends AbstractModel = AbstractModel> = ComponentSt
      */
     disabled?: boolean;
     /**
+     * Whether the form should be readonly. This make all form fields readonly hides
+     * all buttons.
+     */
+    readonly?: boolean;
+    /**
      * Allows to customize the layout of the form by providing a custom
      * renderer. The renderer receives the form instance and the pre-rendered
      * fields as props. The renderer can either reuse the pre-rendered fields in
@@ -224,5 +229,5 @@ export type AutoFormProps<M extends AbstractModel = AbstractModel> = ComponentSt
  * />
  * ```
  */
-export declare function AutoForm<M extends AbstractModel>({ service, model, itemIdProperty, item, onSubmitError, onSubmitSuccess, disabled, layoutRenderer: LayoutRenderer, visibleFields, formLayoutProps, fieldOptions, style, id, className, deleteButtonVisible, onDeleteSuccess, onDeleteError, }: AutoFormProps<M>): JSX.Element;
+export declare function AutoForm<M extends AbstractModel>({ service, model, itemIdProperty, item, onSubmitError, onSubmitSuccess, disabled, readonly, layoutRenderer: LayoutRenderer, visibleFields, formLayoutProps, fieldOptions, style, id, className, deleteButtonVisible, onDeleteSuccess, onDeleteError, }: AutoFormProps<M>): JSX.Element;
 //# sourceMappingURL=autoform.d.ts.map
