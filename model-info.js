@@ -47,7 +47,7 @@ function hasAnnotation(meta, annotationName) {
   return meta.annotations?.some((annotation) => annotation.name === annotationName) ?? false;
 }
 function _generateHeader(path) {
-  return path.substring(path.lastIndexOf(".") + 1).replace(/([A-Z])/gu, "-$1").toLowerCase().replace(/-/gu, " ").replace(/^./u, (match) => match.toUpperCase());
+  return path.substring(path.lastIndexOf(".") + 1).replace(/([A-ZĀČĒĢĪĶĻŅŠŪŽ])/gu, "-$1").toLowerCase().replace(/-/gu, " ").replace(/^./u, (match) => match.toUpperCase());
 }
 const getPropertyNames = (model) => {
   const propertyNames = [];
