@@ -64,10 +64,6 @@ function AutoFormField(props) {
   useEffect(() => {
     formPart.setValidators([...defaultValidators, ...validators ?? []]);
   }, [validators]);
-  if (options.renderer) {
-    const customFieldProps = { ...field, disabled: props.disabled, label };
-    return options.renderer({ field: customFieldProps });
-  }
   const fieldProps = {
     id: options.id,
     className: options.className,
@@ -79,6 +75,10 @@ function AutoFormField(props) {
     disabled: options.disabled ?? props.disabled,
     readonly: options.readonly ?? props.readonly
   };
+  if (options.renderer) {
+    const customFieldProps = { ...field, disabled: props.disabled, label };
+    return options.renderer({ field: customFieldProps, model, fieldProps });
+  }
   switch (props.propertyInfo.type) {
     case "string":
       return /* @__PURE__ */ jsx(AutoFormTextField, { model, field, fieldProps });

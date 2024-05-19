@@ -1,4 +1,4 @@
-import { type Validator } from '@hilla/form';
+import { type AbstractModel, type Validator } from '@hilla/form';
 import type { FieldDirectiveResult, UseFormResult } from '@hilla/react-form';
 import type { CSSProperties, JSX } from 'react';
 import type { PropertyInfo } from './model-info.js';
@@ -8,10 +8,6 @@ export type AutoFormFieldProps = Readonly<{
     options: FieldOptions;
     disabled?: boolean;
     readonly?: boolean;
-}>;
-type CustomFormFieldProps = FieldDirectiveResult & Readonly<{
-    label?: string;
-    disabled?: boolean;
 }>;
 export type FieldOptions = Readonly<{
     /**
@@ -72,9 +68,7 @@ export type FieldOptions = Readonly<{
      * }
      * ```
      */
-    renderer?(props: {
-        field: CustomFormFieldProps;
-    }): JSX.Element;
+    renderer?(props: FieldRendererProps): JSX.Element;
     /**
      * Validators to apply to the field. The validators are added to the form
      * when the field is rendered.
@@ -82,6 +76,12 @@ export type FieldOptions = Readonly<{
      * on every render.
      */
     validators?: Validator[];
+}>;
+type CommonFieldProps = Pick<FieldOptions, 'className' | 'colspan' | 'disabled' | 'readonly' | 'helperText' | 'id' | 'label' | 'placeholder' | 'readonly' | 'style'>;
+type FieldRendererProps = Readonly<{
+    model: AbstractModel;
+    field: FieldDirectiveResult;
+    fieldProps: CommonFieldProps;
 }>;
 export declare function AutoFormField(props: AutoFormFieldProps): JSX.Element | null;
 export {};
