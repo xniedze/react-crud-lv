@@ -78,7 +78,7 @@ export type FieldOptions = Readonly<{
     validators?: Validator[];
 }>;
 type CommonFieldProps = Pick<FieldOptions, 'className' | 'colspan' | 'disabled' | 'readonly' | 'helperText' | 'id' | 'label' | 'placeholder' | 'readonly' | 'style'>;
-type FieldRendererProps = Readonly<{
+export type FieldRendererProps = Readonly<{
     model: AbstractModel;
     field: FieldDirectiveResult;
     fieldProps: CommonFieldProps;

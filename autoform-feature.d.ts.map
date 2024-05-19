@@ -1,1 +1,1 @@
-{"version":3,"file":"autoform-feature.d.ts","sourceRoot":"","sources":["src/autoform-feature.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,QAAQ,IAAI,SAAS,EAAE,MAAM,eAAe,CAAC;AAGtD,cAAc,eAAe,CAAC;AAE9B,eAAO,MAAM,QAAQ,EAAE,OAAO,SAAsD,CAAC"}
+{"version":3,"file":"autoform-feature.d.ts","sourceRoot":"","sources":["src/autoform-feature.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,QAAQ,IAAI,SAAS,EAAE,MAAM,eAAe,CAAC;AAGtD,cAAc,eAAe,CAAC;AAC9B,cAAc,qBAAqB,CAAA;AAEnC,eAAO,MAAM,QAAQ,EAAE,OAAO,SAAsD,CAAC"}
