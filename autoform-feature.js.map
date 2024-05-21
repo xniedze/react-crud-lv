@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["src/autoform-feature.ts"],
-  "sourcesContent": ["/* eslint-disable import/export */\nimport { AutoForm as _AutoForm } from './autoform.js';\nimport { featureRegistration } from './util';\n\nexport * from './autoform.js';\nexport * from './autoform-field.js'\nexport * from './model-info.js'\n\nexport const AutoForm: typeof _AutoForm = featureRegistration(_AutoForm, 'AutoForm');\n"],
-  "mappings": "AACA,SAAS,YAAY,iBAAiB;AACtC,SAAS,2BAA2B;AAEpC,cAAc;AACd,cAAc;AACd,cAAc;AAEP,MAAM,WAA6B,oBAAoB,WAAW,UAAU;",
+  "sourcesContent": ["/* eslint-disable import/export */\nimport { AutoForm as _AutoForm } from './autoform.js';\nimport { featureRegistration } from './util';\nimport { ModelInfo as _ModelInfo } from './model-info.js';\nimport type { AbstractModel, DetachedModelConstructor } from '@hilla/form';\nexport * from './autoform.js';\nexport * from './autoform-field.js'\nexport * from './model-info.js'\nexport const createModelInfo = (model: DetachedModelConstructor<AbstractModel>, idPropertyName?: string) => new _ModelInfo(model, idPropertyName)\nexport const AutoForm: typeof _AutoForm = featureRegistration(_AutoForm, 'AutoForm');\n\n"],
+  "mappings": "AACA,SAAS,YAAY,iBAAiB;AACtC,SAAS,2BAA2B;AACpC,SAAS,aAAa,kBAAkB;AAExC,cAAc;AACd,cAAc;AACd,cAAc;AACP,MAAM,kBAAkB,CAAC,OAAgD,mBAA4B,IAAI,WAAW,OAAO,cAAc;AACzI,MAAM,WAA6B,oBAAoB,WAAW,UAAU;",
   "names": []
 }
