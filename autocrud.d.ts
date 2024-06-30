@@ -6,6 +6,9 @@ import type { CrudService } from './crud.js';
 import { type ComponentStyleProps } from './util.js';
 export type AutoCrudFormProps<TModel extends AbstractModel> = Omit<Partial<AutoFormProps<TModel>>, 'disabled' | 'item' | 'model' | 'service'>;
 export type AutoCrudGridProps<TItem> = Omit<Partial<AutoGridProps<TItem>>, 'model' | 'onActiveItemChanged' | 'selectedItems' | 'service'>;
+export type AutoCrudI18n = {
+    newItem: String;
+};
 export type AutoCrudProps<TModel extends AbstractModel = AbstractModel> = ComponentStyleProps & Readonly<{
     /**
      * The service to use for fetching the data, as well saving and deleting
@@ -50,6 +53,7 @@ export type AutoCrudProps<TModel extends AbstractModel = AbstractModel> = Compon
      * Props to pass to the grid. See the `AutoGrid` component for details.
      */
     gridProps?: AutoCrudGridProps<Value<TModel>>;
+    i18n?: AutoCrudI18n;
 }>;
 /**
  * Auto CRUD is a component that provides CRUD (create, read, update, delete)
@@ -66,5 +70,5 @@ export type AutoCrudProps<TModel extends AbstractModel = AbstractModel> = Compon
  * <AutoCrud service={PersonService} model={PersonModel} />
  * ```
  */
-export declare function AutoCrud<TModel extends AbstractModel>({ service, model, itemIdProperty, formProps, gridProps, style, id, className, }: AutoCrudProps<TModel>): JSX.Element;
+export declare function AutoCrud<TModel extends AbstractModel>({ service, model, itemIdProperty, formProps, gridProps, i18n, style, id, className, }: AutoCrudProps<TModel>): JSX.Element;
 //# sourceMappingURL=autocrud.d.ts.map

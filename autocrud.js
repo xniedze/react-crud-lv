@@ -15,6 +15,7 @@ function AutoCrud({
   itemIdProperty,
   formProps,
   gridProps,
+  i18n,
   style,
   id,
   className
@@ -46,7 +47,10 @@ function AutoCrud({
         ref: autoGridRef
       }
     ),
-    /* @__PURE__ */ jsx("div", { className: "auto-crud-toolbar", children: /* @__PURE__ */ jsx(Button, { theme: "primary", onClick: () => setItem(emptyItem), children: "+ Jauns" }) })
+    /* @__PURE__ */ jsx("div", { className: "auto-crud-toolbar", children: /* @__PURE__ */ jsxs(Button, { theme: "primary", onClick: () => setItem(emptyItem), children: [
+      "+ ",
+      i18n?.newItem ?? "Pievienot"
+    ] }) })
   ] });
   const autoForm = /* @__PURE__ */ jsx(
     AutoForm,
