@@ -209,6 +209,7 @@ export type AutoFormProps<M extends AbstractModel = AbstractModel> = ComponentSt
      * deleted.
      */
     onDeleteSuccess?({ item }: DeleteEvent<Value<M>>): void;
+    submitOnEnter?: boolean;
 }>;
 /**
  * Auto Form is a component that automatically generates a form for editing,
@@ -229,5 +230,5 @@ export type AutoFormProps<M extends AbstractModel = AbstractModel> = ComponentSt
  * />
  * ```
  */
-export declare function AutoForm<M extends AbstractModel>({ service, model, itemIdProperty, item, onSubmitError, onSubmitSuccess, disabled, readonly, layoutRenderer: LayoutRenderer, visibleFields, formLayoutProps, fieldOptions, style, id, className, deleteButtonVisible, onDeleteSuccess, onDeleteError, }: AutoFormProps<M>): JSX.Element;
+export declare function AutoForm<M extends AbstractModel>({ service, model, itemIdProperty, item, onSubmitError, onSubmitSuccess, disabled, readonly, layoutRenderer: LayoutRenderer, visibleFields, formLayoutProps, fieldOptions, style, id, className, deleteButtonVisible, onDeleteSuccess, onDeleteError, submitOnEnter }: AutoFormProps<M>): JSX.Element;
 //# sourceMappingURL=autoform.d.ts.map

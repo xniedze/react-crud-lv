@@ -35,7 +35,8 @@ function AutoForm({
   className,
   deleteButtonVisible,
   onDeleteSuccess,
-  onDeleteError
+  onDeleteError,
+  submitOnEnter
 }) {
   const form = useForm(model, {
     onSubmit: async (formItem) => service.save(formItem)
@@ -110,7 +111,7 @@ function AutoForm({
     setShowDeleteDialog(false);
   }
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !isSubmitDisabled) {
+    if (event.key === "Enter" && !isSubmitDisabled && submitOnEnter) {
       void handleSubmit();
     }
   };
